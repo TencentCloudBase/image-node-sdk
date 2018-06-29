@@ -30,17 +30,16 @@ let imageUrl = 'https://www.ocf.berkeley.edu/~sather/wp-content/uploads/2018/01/
 let imgClient1 = new ImageClient({ AppId, SecretId, SecretKey });
 imgClient1
     .setProxy(ProxyUrl)
-    .setHost('100.100.72.76')
     .setProtocol('http')
     .imgTagDetect({
-    data: {
-        url: imageUrl
-    }
-}).then((result) => {
-    console.log(result.body)
-}).catch((e) => {
-    console.log(e);
-});
+        data: {
+            url: imageUrl
+        }
+    }).then((result) => {
+        console.log(result.body);
+    }).catch((e) => {
+        console.log(e);
+    });
 
 // OCR-身份证识别
 let idCardImageUrl = 'http://images.cnitblog.com/blog/454646/201306/07090518-029ff26fac014d72a7786937e8319c78.jpg';
@@ -65,7 +64,7 @@ imgClient2.ocrIdCard({
         'content-type': 'multipart/form-data'
     }
 }).then((result) => {
-    console.log(result.body)
+    console.log(result.body);
 }).catch((e) => {
     console.log(e);
 });
@@ -78,7 +77,7 @@ imgClient3.ocrBizCard({
         url_list: [bizCardImageUrl]
     }
 }).then((result) => {
-    console.log(result.body)
+    console.log(result.body);
 }).catch((e) => {
     console.log(e);
 });
@@ -93,7 +92,7 @@ imgClient4.faceDetect({
         url: faceDetectImageUrl
     }
 }).then((result) => {
-    console.log(result.body)
+    console.log(result.body);
 }).catch((e) => {
     console.log(e);
 });
@@ -108,7 +107,7 @@ imgClient5.faceShape({
         url: faceShapeImageUrl
     }
 }).then((result) => {
-    console.log(result.body)
+    console.log(result.body);
 }).catch((e) => {
     console.log(e);
 });
@@ -124,7 +123,7 @@ imgClient6.faceCompare({
         urlB: faceCompareImageUrlB
     }
 }).then((result) => {
-    console.log(result.body)
+    console.log(result.body);
 }).catch((e) => {
     console.log(e);
 });
@@ -138,7 +137,7 @@ imgClient7.ocrHandWriting({
         url: handWritingImageUrl
     }
 }).then((result) => {
-    console.log(result.body)
+    console.log(result.body);
 }).catch((e) => {
     console.log(e);
 });
@@ -152,7 +151,7 @@ imgClient8.ocrBizLicense({
         url: bizLicenseImageUrl
     }
 }).then((result) => {
-    console.log(result.body)
+    console.log(result.body);
 }).catch((e) => {
     console.log(e);
 });
@@ -167,7 +166,7 @@ imgClient9.ocrDrivingLicence('ocr-drivinglicence', {
         url: drivinglicenceImageUrl
     }
 }).then((result) => {
-    console.log(result.body)
+    console.log(result.body);
 }).catch((e) => {
     console.log(e);
 });
@@ -181,7 +180,7 @@ imgClient10.ocrPlate({
         url: plateImageUrl
     }
 }).then((result) => {
-    console.log(result.body)
+    console.log(result.body);
 }).catch((e) => {
     console.log(e);
 });
@@ -194,7 +193,7 @@ imgClient11.ocrGeneral({
         url: generalImageUrl
     }
 }).then((result) => {
-    console.log(result.body)
+    console.log(result.body);
 }).catch((e) => {
     console.log(e);
 });
@@ -208,7 +207,7 @@ imgClient12.ocrBankCard({
         url: bankcardImageUrl
     }
 }).then((result) => {
-    console.log(result.body)
+    console.log(result.body);
 }).catch((e) => {
     console.log(e);
 });
@@ -222,7 +221,7 @@ imgClient12.ocrBankCard({
         url: bankcardImageUrl
     }
 }).then((result) => {
-    console.log(result.body)
+    console.log(result.body);
 }).catch((e) => {
     console.log(e);
 });
@@ -243,7 +242,7 @@ imgClient13.faceNewPerson({
         person_name: '迪丽热巴'
     }
 }).then((result) => {
-    console.log(result.body)
+    console.log(result.body);
 }).catch((e) => {
     console.log(e);
 });
@@ -260,7 +259,7 @@ imgClient14.faceMultiple({
         // person_name: '迪丽热巴'
     }
 }).then((result) => {
-    console.log(result.body)
+    console.log(result.body);
 }).catch((e) => {
     console.log(e);
 });
@@ -275,7 +274,7 @@ imgClient15.faceVerify({
         url: person6,
     }
 }).then((result) => {
-    console.log(result.body)
+    console.log(result.body);
 }).catch((e) => {
     console.log(e);
 });
@@ -290,7 +289,7 @@ imgClient16.faceIdentify({
         url: person7,
     }
 }).then((result) => {
-    console.log(result.body)
+    console.log(result.body);
 }).catch((e) => {
     console.log(e);
 });

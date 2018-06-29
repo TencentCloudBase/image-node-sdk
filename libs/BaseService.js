@@ -10,7 +10,7 @@ const ERR = require('./config/error');
 
 class BaseService {
 
-    constructor({ AppId, SecretId, SecretKey}) {
+    constructor({ AppId, SecretId, SecretKey }) {
         this.rp = rp;
         this.AppId = AppId;
         this.SecretId = SecretId;
@@ -122,7 +122,7 @@ class BaseService {
             rpParam.proxy = this.Proxy;
         }
 
-        console.log(rpParam);
+        // console.log(rpParam);
         return this.rp(rpParam);
 
     }

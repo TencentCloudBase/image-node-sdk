@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "example": "node ./example/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "author": "",
   "license": "MIT",
@@ -14,6 +14,9 @@
     "request": "^2.87.0"
   },
   "devDependencies": {
+    "babel-eslint": "^8.2.5",
+    "eslint": "^5.0.1",
+    "eslint-config-alloy": "^1.4.2",
     "jest": "^23.2.0"
   },
   "engines": {
