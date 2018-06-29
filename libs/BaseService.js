@@ -5,7 +5,7 @@ const {
 const urlUtil = require('url');
 const randomInt = require('random-int');
 const config = require('./config');
-const ERR = require('./config/error');
+const ERR = require('./error');
 
 
 class BaseService {
