@@ -1,16 +1,21 @@
 const {
     ImageClient
 } = require('../index');
-let {
-    AppId,
-    SecretId,
-    SecretKey
-} = require('../config');
+
+let AppId = null;
+let SecretId = null;
+let SecretKey = null;
 
 if (process.env.TRAVIS) {
     AppId = process.env.AppId;
     SecretId = process.env.SecretId;
     SecretKey = process.env.SecretKey;
+}
+else {
+    let config = require('../config');
+    AppId = config.AppId;
+    SecretId = config.SecretId;
+    SecretKey = config.SecretKey;
 }
 
 describe.only('ai service', () => {
