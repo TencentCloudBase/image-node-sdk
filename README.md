@@ -1,5 +1,8 @@
 # 腾讯云 - 智能图像服务
 
+[![NPM Version](https://img.shields.io/npm/v/image-nodejs-sdk.svg?style=flat)](https://www.npmjs.com/package/image-nodejs-sdk)
+[![Deps](https://david-dm.org/tencentyun/image-nodejs-sdk.svg)](https://david-dm.org/tencentyun/image-nodejs-sdk)
+
 ## 产品地址
 [https://cloud.tencent.com/document/product/641](https://cloud.tencent.com/document/product/641)
 
