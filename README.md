@@ -1,7 +1,7 @@
 # 腾讯云 - 智能图像服务
 
-[![NPM Version](https://img.shields.io/npm/v/image-nodejs-sdk.svg?style=flat)](https://www.npmjs.com/package/image-nodejs-sdk)
-[![Deps](https://david-dm.org/tencentyun/image-nodejs-sdk.svg)](https://david-dm.org/tencentyun/image-nodejs-sdk)
+[![NPM Version](https://img.shields.io/npm/v/image-node-sdk.svg?style=flat)](https://www.npmjs.com/package/image-node-sdk)
+[![Deps](https://david-dm.org/tencentyun/image-node-sdk.svg)](https://david-dm.org/tencentyun/image-node-sdk)
 
 ## 产品地址
 [https://cloud.tencent.com/document/product/641](https://cloud.tencent.com/document/product/641)
@@ -86,7 +86,7 @@ npm run example
 ```
 
 
-### 支持功能
+## 支持功能
 * 信息认证
     - [x] [身份证信息认证](https://cloud.tencent.com/document/product/641/13391) - authIdCard
 
