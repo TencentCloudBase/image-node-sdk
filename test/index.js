@@ -8,11 +8,13 @@ let AppId = null;
 let SecretId = null;
 let SecretKey = null;
 let ProxyUrl = null;
+let uin = null;
 
 if (process.env.TRAVIS) {
     AppId = process.env.AppId;
     SecretId = process.env.SecretId;
     SecretKey = process.env.SecretKey;
+    uin = process.env.uin;
 }
 else {
     let config = require('../config');
@@ -20,6 +22,8 @@ else {
     SecretId = config.SecretId;
     SecretKey = config.SecretKey;
     ProxyUrl = config.ProxyUrl;
+    uin = config.uin;
+
 }
 
 describe.only('ai service', () => {
@@ -34,25 +38,24 @@ describe.only('ai service', () => {
                 }
             });
 
-        // console.log(result.body, typeof result.body);
         let data = JSON.parse(result.body);
+        console.log(data);
         expect(data).toEqual({
             'code': 0,
             'message': 'success',
             'tags': [{ 'tag_name': '盘子', 'tag_confidence': 45 }, { 'tag_name': '碗', 'tag_confidence': 23 }, { 'tag_name': '菜品', 'tag_confidence': 61 }]
         });
-    }, 20000);
+    }, 25000);
 
     it('人脸融合 - faceFuse', async () => {
         let imgClient1 = new ImageClient({ AppId, SecretId, SecretKey });
-        let imgData = fs.readFileSync(path.join(__dirname, 'ponyma.jpg')).toString('base64'); // .toString('base64');
-        // imgData = Buffer.from(imgData, 'base64').toString();
-        // console.log(imgData);
+        let imgData = fs.readFileSync(path.join(__dirname, 'ponyma.jpg')).toString('base64');
+
         let result = await imgClient1
-            // .setProtocol('http')
+
             .faceFuse({
                 data: {
-                    uin: '249806703',
+                    uin: uin,
                     project_id: '100307',
                     model_id: 'qc_100307_152854_1',
                     img_data: imgData,
