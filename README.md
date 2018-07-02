@@ -4,9 +4,6 @@
 [![Travis](https://img.shields.io/travis/tencentyun/image-node-sdk.svg)](https://travis-ci.org/tencentyun/image-node-sdk)
 [![Deps](https://david-dm.org/tencentyun/image-node-sdk.svg)](https://david-dm.org/tencentyun/image-node-sdk)
 
-## 产品地址
-[https://cloud.tencent.com/document/product/641](https://cloud.tencent.com/document/product/641)
-
 ## 安装使用
 
 ```javascript
