@@ -1,15 +1,26 @@
 const {
     ImageClient
 } = require('../index');
-const {
-    ProxyUrl,
-    AppId,
-    SecretId,
-    SecretKey
-} = require('../config');
 const path = require('path');
 const fs = require('fs');
-// const Buffer = require('buffer');
+
+let AppId = null;
+let SecretId = null;
+let SecretKey = null;
+let ProxyUrl = null;
+
+if (process.env.TRAVIS) {
+    AppId = process.env.AppId;
+    SecretId = process.env.SecretId;
+    SecretKey = process.env.SecretKey;
+}
+else {
+    let config = require('../config');
+    AppId = config.AppId;
+    SecretId = config.SecretId;
+    SecretKey = config.SecretKey;
+    ProxyUrl = config.ProxyUrl;
+}
 
 describe.only('ai service', () => {
     it('图片标签 - imgTagDetect', async () => {
