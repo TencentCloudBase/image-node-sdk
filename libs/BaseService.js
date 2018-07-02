@@ -127,6 +127,11 @@ class BaseService {
 
     }
 
+    // 人脸融合
+    faceFuse(params, options) {
+        return this.request('face-fuse', params, options);
+    }
+
     // 身份证信息认证
     authIdCard(params, options) {
         return this.request('auth-idcard', params, options);

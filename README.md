@@ -86,7 +86,7 @@ npm run example
 ```
 
 
-### 支持功能
+## 支持功能
 * 信息认证
     - [x] [身份证信息认证](https://cloud.tencent.com/document/product/641/13391) - authIdCard
 
@@ -130,3 +130,9 @@ npm run example
     - [x] [活体检测—获取唇语验证码](https://cloud.tencent.com/document/product/641/12431) - faceLiveGetFour
     - [x] [活体检测视频与用户照片的对比](https://cloud.tencent.com/document/product/641/12432) - faceLiveDetectFour
     - [x] [用户上传照片身份信息核验](https://cloud.tencent.com/document/product/641/12433) - faceIdCardCompare
+
+* 人脸融合
+    - [x] [人脸融合](https://cloud.tencent.com/document/product/670/14357) - faceFuse
+
+## 更新日志
+[日志](./CHANGELOG.md)

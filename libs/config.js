@@ -1,6 +1,10 @@
 module.exports = {
     // 服务映射列表
     Services: {
+        // 人脸融合
+        'face-fuse': {
+            url: 'https://aiconsole.cloud.tencent.com/fuseapi/face',
+        },
         // 身份证信息认证
         'auth-idcard': {
             url: 'https://service.image.myqcloud.com/auth/idcard',
