@@ -16,7 +16,7 @@ npm i -save image-node-sdk-v2
 ```javascript
 const {
     ImageClient
-} = require('../packages/tcb-ai');
+} = require('image-node-sdk');
 
 let AppId = ''; // 腾讯云 AppId
 let SecretId = ''; // 腾讯云 SecretId
@@ -41,7 +41,7 @@ const fs = require('fs');
 const path = require('path');
 const {
     ImageClient
-} = require('../packages/tcb-ai');
+} = require('image-node-sdk');
 
 let AppId = ''; // 腾讯云 AppId
 let SecretId = ''; // 腾讯云 SecretId
