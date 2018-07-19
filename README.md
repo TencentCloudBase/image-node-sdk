@@ -134,3 +134,6 @@ npm run example
 
 ## 更新日志
 [日志](./CHANGELOG.md)
+
+## 声明
+测试用的身份证源于[该文章](https://blog.csdn.net/kaka20080622/article/details/50563069)的实验身份证，如有侵权，请联系作者删除。
