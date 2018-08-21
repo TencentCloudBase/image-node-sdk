@@ -1,8 +1,8 @@
 # 腾讯云 - 智能图像服务
 
 [![NPM Version](https://img.shields.io/npm/v/image-node-sdk.svg?style=flat)](https://www.npmjs.com/package/image-node-sdk)
-[![Travis](https://img.shields.io/travis/tencentyun/image-node-sdk.svg)](https://travis-ci.org/tencentyun/image-node-sdk)
-[![Deps](https://david-dm.org/tencentyun/image-node-sdk.svg)](https://david-dm.org/tencentyun/image-node-sdk)
+[![Travis](https://img.shields.io/travis/TencentCloudBase/image-node-sdk.svg)](https://travis-ci.org/TencentCloudBase/image-node-sdk)
+[![Deps](https://david-dm.org/TencentCloudBase/image-node-sdk.svg)](https://david-dm.org/TencentCloudBase/image-node-sdk)
 
 ## 安装使用
 
