@@ -10,7 +10,7 @@ const ERR = require('./error');
 
 class BaseService {
 
-    constructor({ AppId, SecretId, SecretKey }) {
+    constructor({ AppId, SecretId, SecretKey } = {}) {
         let {
             APPID,
             SECRETID,
