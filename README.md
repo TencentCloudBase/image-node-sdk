@@ -1,13 +1,13 @@
 # 腾讯云 - 智能图像服务
 
 [![NPM Version](https://img.shields.io/npm/v/image-node-sdk.svg?style=flat)](https://www.npmjs.com/package/image-node-sdk)
-[![Travis](https://img.shields.io/travis/tencentyun/image-node-sdk.svg)](https://travis-ci.org/tencentyun/image-node-sdk)
-[![Deps](https://david-dm.org/tencentyun/image-node-sdk.svg)](https://david-dm.org/tencentyun/image-node-sdk)
+[![Travis](https://img.shields.io/travis/TencentCloudBase/image-node-sdk.svg)](https://travis-ci.org/TencentCloudBase/image-node-sdk)
+[![Deps](https://david-dm.org/TencentCloudBase/image-node-sdk.svg)](https://david-dm.org/TencentCloudBase/image-node-sdk)
 
 ## 安装
 
 ```javascript
-npm i -save image-node-sdk-v2
+npm i -save image-node-sdk
 ```
 ## 配置
 
@@ -150,3 +150,6 @@ npm run example
 
 ## 更新日志
 [日志](./CHANGELOG.md)
+
+## 声明
+测试用的身份证源于[该文章](https://blog.csdn.net/kaka20080622/article/details/50563069)的实验身份证，如有侵权，请联系作者删除。
