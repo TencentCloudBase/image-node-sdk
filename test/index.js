@@ -34,7 +34,7 @@ describe('ai service', () => {
         expect(data).toEqual({
             'code': 0,
             'message': 'success',
-            'tags': [{ 'tag_name': '盘子', 'tag_confidence': 45 }, { 'tag_name': '碗', 'tag_confidence': 23 }, { 'tag_name': '菜品', 'tag_confidence': 61 }]
+            'tags': [{ 'tag_name': '盘子', 'tag_confidence': 45 }, { 'tag_name': '碗', 'tag_confidence': 23 }, { 'tag_name': '菜品', 'tag_confidence': 62 }]
         });
     }, 30000);
 
