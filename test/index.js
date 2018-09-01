@@ -38,7 +38,7 @@ describe('ai service', () => {
         });
     }, 25000);
 
-    it.only('人脸融合 - faceFuse', async () => {
+    it('人脸融合 - faceFuse', async () => {
         let imgClient1 = new ImageClient();
         let imgData = fs.readFileSync(path.join(__dirname, 'ponyma.jpg')).toString('base64');
 
