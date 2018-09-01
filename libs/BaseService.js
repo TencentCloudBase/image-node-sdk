@@ -11,10 +11,18 @@ const ERR = require('./error');
 class BaseService {
 
     constructor({ AppId, SecretId, SecretKey }) {
+        let {
+            APPID,
+            SECRETID,
+            SECRETKEY,
+            TENCENTCLOUD_APPID,
+            TENCENTCLOUD_SECRETID,
+            TENCENTCLOUD_SECRETKEY
+        } = process.env;
         this.rp = rp;
-        this.AppId = AppId;
-        this.SecretId = SecretId;
-        this.SecretKey = SecretKey;
+        this.AppId = AppId || TENCENTCLOUD_APPID || APPID;
+        this.SecretId = SecretId || TENCENTCLOUD_SECRETID || SECRETID;
+        this.SecretKey = SecretKey || TENCENTCLOUD_SECRETKEY || SECRETKEY;
     }
 
     setProxy(proxy) {

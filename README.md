@@ -4,11 +4,27 @@
 [![Travis](https://img.shields.io/travis/tencentyun/image-node-sdk.svg)](https://travis-ci.org/tencentyun/image-node-sdk)
 [![Deps](https://david-dm.org/tencentyun/image-node-sdk.svg)](https://david-dm.org/tencentyun/image-node-sdk)
 
-## 安装使用
+## 安装
 
 ```javascript
 npm i -save image-node-sdk-v2
 ```
+## 配置
+
+可以设置以下环境变量，这样就不需要传入 `AppId`, `SecretID` 和 `SecretKey` 了。
+```javascript
+process.env.TENCENTCLOUD_APPID
+process.env.TENCENTCLOUD_SECRETID
+process.env.TENCENTCLOUD_SECRETKEY
+
+// 或
+process.env.APPID
+process.env.SECRETID
+process.env.SECRETKEY
+```
+
+## 使用
+
 以 OCR-身份证识别 为例，一般支持外链 url 或者本地读取图片文件，两种方式。
 
 * 外链 url
