@@ -9,6 +9,7 @@
 ```javascript
 npm i -save image-node-sdk
 ```
+
 ## 配置
 
 可以设置以下环境变量，这样就不需要传入 `AppId`, `SecretID` 和 `SecretKey` 了。
