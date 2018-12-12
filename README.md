@@ -7,7 +7,7 @@
 ## 安装
 
 ```javascript
-npm i -save image-node-sdk
+npm i --save image-node-sdk
 ```
 
 ## 配置
