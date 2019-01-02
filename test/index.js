@@ -13,6 +13,9 @@ if (process.env.TRAVIS) {
 else {
     let config = require('../config');
     ProxyUrl = config.ProxyUrl;
+    process.env.TENCENTCLOUD_APPID = config.AppId;
+    process.env.TENCENTCLOUD_SECRETID = config.SecretId;
+    process.env.TENCENTCLOUD_SECRETKEY = config.SecretKey;
     uin = config.uin;
 
 }
@@ -30,7 +33,7 @@ describe('ai service', () => {
             });
 
         let data = JSON.parse(result.body);
-        console.log(data);
+        // console.log(data);
         expect(data).toEqual({
             'code': 0,
             'message': 'success',
@@ -44,18 +47,18 @@ describe('ai service', () => {
 
         // console.log(imgData);
         let result = await imgClient1
-
             .faceFuse({
                 data: {
                     uin: uin,
-                    project_id: '100307',
-                    model_id: 'qc_100307_152854_1',
+                    project_id: '100792',
+                    model_id: 'qc_100792_162409_1',
                     img_data: imgData,
                     rsp_img_type: 'url'
                 }
             });
 
-        let data = JSON.parse(result.body);
-        expect(data.ret).toEqual('0');
+        let data = JSON.parse(result);
+        expect(data.Image).not.toBeNull();
+        expect(data.RequestId).not.toBeNull();
     }, 20000);
 });

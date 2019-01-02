@@ -7,6 +7,12 @@ const randomInt = require('random-int');
 const config = require('./config');
 const ERR = require('./error');
 
+// 部分接口陆续使用 API 3.0
+const tencentcloud = require("tencentcloud-sdk-nodejs");
+const Credential = tencentcloud.common.Credential;
+const ClientProfile = tencentcloud.common.ClientProfile;
+const HttpProfile = tencentcloud.common.HttpProfile;
+
 
 class BaseService {
 
@@ -137,7 +143,47 @@ class BaseService {
 
     // 人脸融合
     faceFuse(params, options) {
-        return this.request('face-fuse', params, options);
+        const {
+            project_id,
+            model_id,
+            img_data,
+            rsp_img_type
+        } = params.data;
+
+        const FacefusionClient = tencentcloud.facefusion.v20181201.Client;
+        const models = tencentcloud.facefusion.v20181201.Models;
+
+        let cred = new Credential(this.SecretId, this.SecretKey);
+        let httpProfile = new HttpProfile();
+        httpProfile.endpoint = 'facefusion.tencentcloudapi.com';
+        let clientProfile = new ClientProfile();
+        clientProfile.httpProfile = httpProfile;
+        let client = new FacefusionClient(cred, 'ap-shanghai', clientProfile);
+
+        let req = new models.FaceFusionRequest();
+
+        let reqParams = JSON.stringify({
+            ProjectId: project_id,
+            ModelId: model_id,
+            Image: img_data,
+            RspImgType: rsp_img_type
+        });
+
+        req.from_json_string(reqParams);
+        
+        return new Promise((resolve, reject) => {
+            client.FaceFusion(req, function(errMsg, response) {
+
+                if (errMsg) {
+                    reject(errMsg);
+                    return;
+                }
+            
+                resolve(response.to_json_string());
+            });
+        });
+        
+        // return this.request('face-fuse', params, options);
     }
 
     // 身份证信息认证
