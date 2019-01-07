@@ -3,20 +3,26 @@ const {
 } = require('../index');
 const path = require('path');
 const fs = require('fs');
-let config = require('../config');
 
 let ProxyUrl = null;
 let uin = null;
+let IdCard = null;
+let Name = null;
 
 if (process.env.TRAVIS) {
     uin = process.env.uin;
+    IdCard = process.env.IdCard;
+    Name = process.env.Name;
 }
 else {
+    let config = require('../config');
     ProxyUrl = config.ProxyUrl;
     process.env.TENCENTCLOUD_APPID = config.AppId;
     process.env.TENCENTCLOUD_SECRETID = config.SecretId;
     process.env.TENCENTCLOUD_SECRETKEY = config.SecretKey;
     uin = config.uin;
+    IdCard = config.IdCard;
+    Name = config.Name;
 }
 
 describe('ai service', () => {
@@ -84,8 +90,8 @@ describe('ai service', () => {
                     'content-type': 'multipart/form-data'
                 },
                 formData: {
-                    idcard_number: config.IdCard,
-                    idcard_name: config.Name,
+                    idcard_number: IdCard,
+                    idcard_name: Name,
                     video: fs.readFileSync(path.join(__dirname, '../config/faceIdCardLiveDetectFour.mp4')),
                     validate_data: '1234'
                 }
