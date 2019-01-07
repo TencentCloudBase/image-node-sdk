@@ -5,12 +5,10 @@ const path = require('path');
 const fs = require('fs');
 
 let ProxyUrl = null;
-let uin = null;
 let IdCard = null;
 let Name = null;
 
 if (process.env.TRAVIS) {
-    uin = process.env.uin;
     IdCard = process.env.IdCard;
     Name = process.env.Name;
 }
@@ -20,7 +18,6 @@ else {
     process.env.TENCENTCLOUD_APPID = config.AppId;
     process.env.TENCENTCLOUD_SECRETID = config.SecretId;
     process.env.TENCENTCLOUD_SECRETKEY = config.SecretKey;
-    uin = config.uin;
     IdCard = config.IdCard;
     Name = config.Name;
 }

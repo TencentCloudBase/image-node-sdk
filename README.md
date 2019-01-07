@@ -83,15 +83,19 @@ imgClient.ocrIdCard({
 如果想运行，[example/index.js](./example/index.js) 下面的例子，请先在项目根目录新建 config/index.js 文件，并按以下格式写下配置
 
 ```javascript
-    const ProxyUrl = ''; // 可填公司代理
-    const AppId = ''; // 腾讯云 AppId
-    const SecretId = ''; // 腾讯云  SecretId
-    const SecretKey = ''; // 腾讯云 SecretKey
+const ProxyUrl = ''; // 可填公司代理
+const AppId = ''; // 腾讯云 AppId
+const SecretId = ''; // 腾讯云  SecretId
+const SecretKey = ''; // 腾讯云 SecretKey
+const IdCard = ''; // 身份证号码，用于人脸核身
+const Name = ''; // 身份证姓名，用于人脸核身
 
-    exports.ProxyUrl = ProxyUrl;
-    exports.AppId = AppId;
-    exports.SecretId = SecretId;
-    exports.SecretKey = SecretKey;
+exports.ProxyUrl = ProxyUrl;
+exports.AppId = AppId;
+exports.SecretId = SecretId;
+exports.SecretKey = SecretKey;
+exports.IdCard = IdCard;
+exports.Name = Name;
 ```
 
 然后运行
