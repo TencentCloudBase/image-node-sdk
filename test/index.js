@@ -3,6 +3,7 @@ const {
 } = require('../index');
 const path = require('path');
 const fs = require('fs');
+let config = require('../config');
 
 let ProxyUrl = null;
 let uin = null;
@@ -11,13 +12,11 @@ if (process.env.TRAVIS) {
     uin = process.env.uin;
 }
 else {
-    let config = require('../config');
     ProxyUrl = config.ProxyUrl;
     process.env.TENCENTCLOUD_APPID = config.AppId;
     process.env.TENCENTCLOUD_SECRETID = config.SecretId;
     process.env.TENCENTCLOUD_SECRETKEY = config.SecretKey;
     uin = config.uin;
-
 }
 
 describe('ai service', () => {
@@ -49,11 +48,10 @@ describe('ai service', () => {
         let result = await imgClient1
             .faceFuse({
                 data: {
-                    uin: uin,
-                    project_id: '100792',
-                    model_id: 'qc_100792_162409_1',
-                    img_data: imgData,
-                    rsp_img_type: 'url'
+                    ProjectId: '100792',
+                    ModelId: 'qc_100792_162409_1',
+                    Image: imgData,
+                    RspImgType: 'url'
                 }
             });
 
@@ -61,4 +59,41 @@ describe('ai service', () => {
         expect(data.Image).not.toBeNull();
         expect(data.RequestId).not.toBeNull();
     }, 20000);
+
+    it('人脸核身·获取数字验证码 - faceLiveGetFour', async () => {
+        let imgClient = new ImageClient();
+
+        // console.log(imgData);
+        let result = await imgClient
+            .faceLiveGetFour({
+                data: {}
+            });
+
+        console.log(result.body);
+        let data = JSON.parse(result.body);
+        expect(data.code).toEqual(0);
+        expect(data.data.validate_data).not.toBeNull();
+    }, 20000);
+
+    it.skip('人脸核身·活体人脸核身 - faceIdCardLiveDetectFour', async () => {
+        let imgClient = new ImageClient();
+
+        let result = await imgClient
+            .faceIdCardLiveDetectFour({
+                headers: {
+                    'content-type': 'multipart/form-data'
+                },
+                formData: {
+                    idcard_number: config.IdCard,
+                    idcard_name: config.Name,
+                    video: fs.readFileSync(path.join(__dirname, '../config/faceIdCardLiveDetectFour.mp4')),
+                    validate_data: '1234'
+                }
+            });
+
+        let data = JSON.parse(result.body);
+        expect(data.data.live_status).toEqual(0);
+        expect(data.data.compare_status).toEqual(0);
+    }, 20000);
+
 });

@@ -147,7 +147,10 @@ npm run example
     - [x] [用户上传照片身份信息核验](https://cloud.tencent.com/document/product/641/12433) - faceIdCardCompare
 
 * 人脸融合
-    - [x] [人脸融合](https://cloud.tencent.com/document/product/670/14357) - faceFuse
+    - [x] [人脸融合](https://cloud.tencent.com/document/api/670/31061) - faceFuse
+
+* 注意事项
+人脸核身的相关接口，于2019年起全部需要申请新的[人脸核身-云智慧眼](https://console.cloud.tencent.com/ai/facein/cloud-godident-logic)，这样旧版接口也会同时开通。目前本 `SDK` 依旧是使用旧版的接口，新版接口有待后续更新。
 
 ## 更新日志
 [日志](./CHANGELOG.md)
