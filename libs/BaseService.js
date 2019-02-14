@@ -92,7 +92,7 @@ class BaseService {
      * @param {Ojbect} params
      * @param {Object} options
      */
-    request(type, params, options) {
+    request(type, params, options = {}) {
 
         if (!config.Services.hasOwnProperty(type)) {
             throw new Error(ERR.ERR_NO_SERVICE);
@@ -110,6 +110,7 @@ class BaseService {
         } = params;
 
         let rpParam = {
+            ...options,
             url: this.getUrl(url),
             method: 'POST',
             headers: {
@@ -138,7 +139,6 @@ class BaseService {
 
         // console.log(rpParam);
         return this.rp(rpParam);
-
     }
 
     requestApi3({ Client, Models, Action, endpoint, data, options }) {
