@@ -20,7 +20,7 @@
   "dependencies": {
     "random-int": "^1.0.0",
     "request": "^2.87.0",
-    "tencentcloud-sdk-nodejs": "^3.0.42"
+    "tencentcloud-sdk-nodejs": "^3.0.45"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.5",

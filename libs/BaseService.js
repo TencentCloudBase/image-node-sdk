@@ -141,39 +141,24 @@ class BaseService {
 
     }
 
-    // 人脸融合
-    faceFuse(params, options) {
-        const {
-            ProjectId,
-            ModelId,
-            Image,
-            RspImgType,
-            region
-        } = params.data;
-
-        const FacefusionClient = tencentcloud.facefusion.v20181201.Client;
-        const models = tencentcloud.facefusion.v20181201.Models;
-
+    requestApi3({ Client, Models, Action, endpoint, data, options }) {
         let cred = new Credential(this.SecretId, this.SecretKey);
         let httpProfile = new HttpProfile();
-        httpProfile.endpoint = 'facefusion.tencentcloudapi.com';
+        httpProfile.endpoint = endpoint;
         let clientProfile = new ClientProfile();
         clientProfile.httpProfile = httpProfile;
-        let client = new FacefusionClient(cred, region || 'ap-shanghai', clientProfile);
+        let client = new Client(cred, options.region || 'ap-shanghai', clientProfile);
 
-        let req = new models.FaceFusionRequest();
+        let req = new Models[`${Action}Request`]();
 
         let reqParams = JSON.stringify({
-            ProjectId,
-            ModelId,
-            Image,
-            RspImgType
+            ...data
         });
 
         req.from_json_string(reqParams);
 
         return new Promise((resolve, reject) => {
-            client.FaceFusion(req, function(errMsg, response) {
+            client[Action](req, function(errMsg, response) {
 
                 if (errMsg) {
                     reject(errMsg);
@@ -182,6 +167,23 @@ class BaseService {
 
                 resolve(response.to_json_string());
             });
+        });
+    }
+
+    // 人脸融合
+    FaceFusion(params = {}, options = {}) {
+        const data = params.data || {};
+
+        const FacefusionClient = tencentcloud.facefusion.v20181201.Client;
+        const Models = tencentcloud.facefusion.v20181201.Models;
+
+        return this.requestApi3({
+            Client: FacefusionClient,
+            Models: Models,
+            Action: 'FaceFusion',
+            data: data,
+            options: options,
+            endpoint: 'facefusion.tencentcloudapi.com'
         });
         // return this.request('face-fuse', params, options);
     }

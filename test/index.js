@@ -43,7 +43,7 @@ describe('ai service', () => {
         });
     }, 30000);
 
-    it('人脸融合 - faceFuse', async () => {
+    it.only('人脸融合 - faceFuse', async () => {
         let imgClient1 = new ImageClient();
         let imgData = fs.readFileSync(path.join(__dirname, 'ponyma.jpg')).toString('base64');
 
@@ -78,7 +78,7 @@ describe('ai service', () => {
         expect(data.data.validate_data).not.toBeNull();
     }, 20000);
 
-    it.skip('人脸核身·活体人脸核身 - faceIdCardLiveDetectFour', async () => {
+    it('人脸核身·活体人脸核身 - faceIdCardLiveDetectFour', async () => {
         let imgClient = new ImageClient();
 
         let result = await imgClient
