@@ -1,6 +1,6 @@
 {
   "name": "image-node-sdk",
-  "version": "1.0.7",
+  "version": "2.0.0-beta.1",
   "description": "",
   "main": "index.js",
   "scripts": {

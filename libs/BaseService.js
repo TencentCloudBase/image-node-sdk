@@ -1,18 +1,9 @@
-const {
-    rp,
-    sign
-} = require('./utils');
-const urlUtil = require('url');
-const randomInt = require('random-int');
 const config = require('./config');
-const ERR = require('./error');
 
-// 部分接口陆续使用 API 3.0
 const tencentcloud = require('tencentcloud-sdk-nodejs');
 const Credential = tencentcloud.common.Credential;
 const ClientProfile = tencentcloud.common.ClientProfile;
 const HttpProfile = tencentcloud.common.HttpProfile;
-
 
 class BaseService {
 
@@ -25,7 +16,7 @@ class BaseService {
             TENCENTCLOUD_SECRETID,
             TENCENTCLOUD_SECRETKEY
         } = process.env;
-        this.rp = rp;
+
         this.AppId = AppId || TENCENTCLOUD_APPID || APPID;
         this.SecretId = SecretId || TENCENTCLOUD_SECRETID || SECRETID;
         this.SecretKey = SecretKey || TENCENTCLOUD_SECRETKEY || SECRETKEY;
@@ -33,118 +24,30 @@ class BaseService {
 
     setProxy(proxy) {
         this.Proxy = proxy || null;
+        // process.env.https_proxy = proxy;
+        // process.env.http_proxy = proxy;
         return this;
     }
 
-    setHost(host) {
-        this.Host = host;
-        return this;
-    }
+    init({ action = '', data = {}, options = {}}) {
 
-    setProtocol(protocol) {
-        this.Protocol = protocol;
-        return this;
-    }
-
-    getUrl(urlStr) {
-        let url = urlStr;
-        if (this.Host) {
-            let urlParam = urlUtil.parse(url);
-            urlParam.host = this.Host;
-            urlParam.protocol = this.Protocol || urlParam.protocol;
-            url = urlUtil.format(urlParam);
+        if (!action) {
+            throw new Error('action should not be empty.');
         }
 
-        return url;
+        if (!this[action]) {
+            throw new Error('action cannot be found.');
+        }
+
+        return this[action](data, options);
     }
 
-    /**
-     * 签名校验
-     */
-    sign() {
-        let curTime = Math.ceil(Date.now() / 1000);
-
-        let data = {
-            a: this.AppId,
-            k: this.SecretId,
-            e: curTime + 100,
-            t: curTime,
-            r: randomInt(10000, 99999),
-            u: 0,
-            f: '' // imageUrl
-        };
-
-        let StringA = '';
-        Object.keys(data).forEach(key => {
-            StringA += `&${key}=${data[key]}`;
-        });
-        StringA = StringA.replace('&', '');
-        // console.log(StringA)
-        let Signature = sign(StringA, this.SecretKey);
-
-        // console.log(Signature)
-        return Signature;
-    }
-
-    /**
-     * 发送请求
-     * @param {String} type
-     * @param {Ojbect} params
-     * @param {Object} options
-     */
-    request(type, params, options = {}) {
-
-        if (!config.Services.hasOwnProperty(type)) {
-            throw new Error(ERR.ERR_NO_SERVICE);
-        }
-
-        let services = config.Services[type];
-        let url = services.url;
-        let urlParam = urlUtil.parse(url);
-
-        let {
-            data = {},
-            headers = {},
-            formData = {},
-            rejectUnauthorized
-        } = params;
-
-        let rpParam = {
-            ...options,
-            url: this.getUrl(url),
-            method: 'POST',
-            headers: {
-                'host': urlParam.host,
-                'content-type': 'application/json',
-                'authorization': this.sign()
-            }
-        };
-
-        rpParam.rejectUnauthorized = (typeof rejectUnauthorized === 'undefined' || !rejectUnauthorized) ? false : true;
-        rpParam.headers = Object.assign({}, rpParam.headers, headers);
-
-        if (rpParam.headers['content-type'] === 'application/json') {
-            rpParam.body = JSON.stringify(Object.assign({}, data, {
-                appid: this.AppId
-            }));
-        }
-        else if (rpParam.headers['content-type'] === 'multipart/form-data') {
-            formData.appid = this.AppId;
-            rpParam.formData = formData;
-        }
-
-        if (this.Proxy) {
-            rpParam.proxy = this.Proxy;
-        }
-
-        // console.log(rpParam);
-        return this.rp(rpParam);
-    }
-
-    requestApi3({ Client, Models, Action, endpoint, data, options }) {
+    request({ Service, Action, Version, data, options }) {
+        const Client = tencentcloud[Service][Version].Client;
+        const Models = tencentcloud[Service][Version].Models;
         let cred = new Credential(this.SecretId, this.SecretKey);
         let httpProfile = new HttpProfile();
-        httpProfile.endpoint = endpoint;
+        httpProfile.endpoint = config.Services[Action].url;
         let clientProfile = new ClientProfile();
         clientProfile.httpProfile = httpProfile;
         let client = new Client(cred, options.region || 'ap-shanghai', clientProfile);
@@ -171,225 +74,332 @@ class BaseService {
     }
 
     // 人脸融合
-    FaceFusion(params = {}, options = {}) {
-        const data = params.data || {};
-
-        const FacefusionClient = tencentcloud.facefusion.v20181201.Client;
-        const Models = tencentcloud.facefusion.v20181201.Models;
-
-        return this.requestApi3({
-            Client: FacefusionClient,
-            Models: Models,
+    FaceFusion(data = {}, options = {}) {
+        return this.request({
+            Service: 'facefusion',
             Action: 'FaceFusion',
-            data: data,
-            options: options,
-            endpoint: 'facefusion.tencentcloudapi.com'
+            Version: 'v20181201',
+            data,
+            options,
         });
-        // return this.request('face-fuse', params, options);
     }
 
-    // 身份证信息认证
-    authIdCard(params, options) {
-        return this.request('auth-idcard', params, options);
+    // 实名核身鉴权
+    DetectAuth(data = {}, options = {}) {
+        return this.request({
+            Service: 'faceid',
+            Action: 'DetectAuth',
+            Version: 'v20180301',
+            data,
+            options,
+        });
     }
 
-    // 图片标签
-    imgTagDetect(params, options) {
-        return this.request('image-tag-detect', params, options);
+    // 获取动作顺序
+    GetActionSequence(data = {}, options = {}) {
+        return this.request({
+            Service: 'faceid',
+            Action: 'GetActionSequence',
+            Version: 'v20180301',
+            data,
+            options,
+        });
     }
 
-    // 图片鉴黄
-    imgPornDetect(params, options) {
-        return this.request('image-porn-detect', params, options);
+    // 获取数字验证码
+    GetLiveCode(data = {}, options = {}) {
+        return this.request({
+            Service: 'faceid',
+            Action: 'GetLiveCode',
+            Version: 'v20180301',
+            data,
+            options,
+        });
     }
 
-    // 人脸识别-人脸检测与分析
-    faceDetect(params, options) {
-        return this.request('face-detect', params, options);
+    ImageRecognition(data = {}, options = {}) {
+        return this.request({
+            Service: 'faceid',
+            Action: 'ImageRecognition',
+            Version: 'v20180301',
+            data,
+            options,
+        });
     }
 
-    // 人脸识别-五官定位
-    faceShape(params, options) {
-        return this.request('face-shape', params, options);
+    // 活体人脸比对
+    LivenessCompare(data = {}, options = {}) {
+        return this.request({
+            Service: 'faceid',
+            Action: 'LivenessCompare',
+            Version: 'v20180301',
+            data,
+            options,
+        });
     }
 
-    // 人脸识别-人脸对比
-    faceCompare(params, options) {
-        return this.request('face-compare', params, options);
+    // 活体人脸核身
+    LivenessRecognition(data = {}, options = {}) {
+        return this.request({
+            Service: 'faceid',
+            Action: 'LivenessRecognition',
+            Version: 'v20180301',
+            data,
+            options,
+        });
     }
 
-    // 个体信息管理 - 个体创建
-    faceNewPerson(params, options) {
-        return this.request('face-newperson', params, options);
+    // 获取实名核身结果信息
+    GetDetectInfo(data = {}, options = {}) {
+        return this.request({
+            Service: 'faceid',
+            Action: 'GetDetectInfo',
+            Version: 'v20180301',
+            data,
+            options,
+        });
     }
 
-    // 个体信息管理 - 删除个体
-    faceDelPerson(params, options) {
-        return this.request('face-delperson', params, options);
+    // 人脸检测与分析
+    DetectFace(data = {}, options = {}) {
+        console.log();
+        return this.request({
+            Service: 'iai',
+            Action: 'DetectFace',
+            Version: 'v20180301',
+            data,
+            options,
+        });
     }
 
-    // 个体信息管理 - 增加人脸
-    faceAddFace(params, options) {
-        return this.request('face-addface', params, options);
+    // 五官定位
+    AnalyzeFace(data = {}, options = {}) {
+        return this.request({
+            Service: 'iai',
+            Action: 'AnalyzeFace',
+            Version: 'v20180301',
+            data,
+            options,
+        });
     }
 
-    // 个体信息管理 - 删除人脸
-    faceDelFace(params, options) {
-        return this.request('face-delface', params, options);
+    CompareFace(data = {}, options = {}) {
+        return this.request({
+            Service: 'iai',
+            Action: 'CompareFace',
+            Version: 'v20180301',
+            data,
+            options,
+        });
     }
 
-    // 个体信息管理 - 设置信息
-    faceSetInfo(params, options) {
-        return this.request('face-setinfo', params, options);
+    // 创建人员库
+    CreateGroup(data = {}, options = {}) {
+        return this.request({
+            Service: 'iai',
+            Action: 'CreateGroup',
+            Version: 'v20180301',
+            data,
+            options,
+        });
     }
 
-    // 个体信息管理 - 获取信息
-    faceGetInfo(params, options) {
-        return this.request('face-getinfo', params, options);
+    // 删除人员库
+    DeleteGroup(data = {}, options = {}) {
+        return this.request({
+            Service: 'iai',
+            Action: 'DeleteGroup',
+            Version: 'v20180301',
+            data,
+            options,
+        });
     }
 
-    // 个体信息管理 - 获取组列表
-    faceGetGpIds(params, options) {
-        return this.request('face-getgroupids', params, options);
+    // 获取人员列表
+    GetGroupList(data = {}, options = {}) {
+        return this.request({
+            Service: 'iai',
+            Action: 'GetGroupList',
+            Version: 'v20180301',
+            data,
+            options,
+        });
     }
 
-    // 个体信息管理 - 获取人列表
-    faceGetPersonIds(params, options) {
-        return this.request('face-getpersonids', params, options);
+    // 修改人员库
+    ModifyGroup(data = {}, options = {}) {
+        return this.request({
+            Service: 'iai',
+            Action: 'ModifyGroup',
+            Version: 'v20180301',
+            data,
+            options,
+        });
     }
 
-    // 个体信息管理 - 获取人脸列表
-    faceGetFaceIds(params, options) {
-        return this.request('face-getfaceids', params, options);
+    // 创建人员
+    CreatePerson(data = {}, options = {}) {
+        return this.request({
+            Service: 'iai',
+            Action: 'CreatePerson',
+            Version: 'v20180301',
+            data,
+            options,
+        });
     }
 
-    // 个体信息管理 - 获取人脸信息
-    faceGetFaceInfo(params, options) {
-        return this.request('face-getfaceinfo', params, options);
+    // 删除人员
+    DeletePerson(data = {}, options = {}) {
+        return this.request({
+            Service: 'iai',
+            Action: 'DeletePerson',
+            Version: 'v20180301',
+            data,
+            options,
+        });
     }
 
-    // 个体信息管理 - 新增组信息
-    faceAddGPIds(params, options) {
-        return this.request('face-addgroupids', params, options);
+    // 人员库删除人员
+    DeletePersonFromGroup(data = {}, options = {}) {
+        return this.request({
+            Service: 'iai',
+            Action: 'DeletePersonFromGroup',
+            Version: 'v20180301',
+            data,
+            options,
+        });
     }
 
-    // 个体信息管理 - 删除组信息
-    faceDelGPIds(params, options) {
-        return this.request('face-delgroupids', params, options);
+    // 获取人员列表
+    GetPersonList(data = {}, options = {}) {
+        return this.request({
+            Service: 'iai',
+            Action: 'GetPersonList',
+            Version: 'v20180301',
+            data,
+            options,
+        });
     }
 
-    // 人脸识别-多脸检索
-    faceMultiple(params, options) {
-        return this.request('face-multiple', params, options);
+    // 获取人员列表长度
+    GetPersonListNum(data = {}, options = {}) {
+        return this.request({
+            Service: 'iai',
+            Action: 'GetPersonListNum',
+            Version: 'v20180301',
+            data,
+            options,
+        });
     }
 
-    // 人脸识别-人脸验证
-    faceVerify(params, options) {
-        return this.request('face-verify', params, options);
+    // 获取人员基础信息
+    GetPersonBaseInfo(data = {}, options = {}) {
+        return this.request({
+            Service: 'iai',
+            Action: 'GetPersonBaseInfo',
+            Version: 'v20180301',
+            data,
+            options,
+        });
     }
 
-    // 人脸识别-人脸检索
-    faceIdentify(params, options) {
-        return this.request('face-identify', params, options);
+    // 获取人员归属信息
+    GetPersonGroupInfo(data = {}, options = {}) {
+        return this.request({
+            Service: 'iai',
+            Action: 'GetPersonGroupInfo',
+            Version: 'v20180301',
+            data,
+            options,
+        });
     }
 
-    // 人脸核身-人脸静态活体检测
-    faceLiveDetectPic(params, options) {
-        return this.request('face-livedetectpicture', params, options);
+    // 修改人员基础信息
+    ModifyPersonBaseInfo(data = {}, options = {}) {
+        return this.request({
+            Service: 'iai',
+            Action: 'ModifyPersonBaseInfo',
+            Version: 'v20180301',
+            data,
+            options,
+        });
     }
 
-    // 人脸核身-唇语活体检测视频身份信息核验
-    faceIdCardLiveDetectFour(params, options) {
-        return this.request('face-idcardlivedetectfour', params, options);
+    // 修改人员描述信息
+    ModifyPersonGroupInfo(data = {}, options = {}) {
+        return this.request({
+            Service: 'iai',
+            Action: 'ModifyPersonGroupInfo',
+            Version: 'v20180301',
+            data,
+            options,
+        });
     }
 
-    // 人脸核身-获取唇语验证码
-    faceLiveGetFour(params, options) {
-        // const {
-        //     region
-        // } = params.data;
-
-        // const FaceidClient = tencentcloud.faceid.v20180301.Client;
-        // const models = tencentcloud.faceid.v20180301.Models;
-
-        // const Credential = tencentcloud.common.Credential;
-        // const ClientProfile = tencentcloud.common.ClientProfile;
-        // const HttpProfile = tencentcloud.common.HttpProfile;
-
-        // let cred = new Credential(this.SecretId, this.SecretKey);
-        // let httpProfile = new HttpProfile();
-        // httpProfile.endpoint = 'faceid.tencentcloudapi.com';
-        // let clientProfile = new ClientProfile();
-        // clientProfile.httpProfile = httpProfile;
-        // let client = new FaceidClient(cred, region || 'ap-shanghai', clientProfile);
-
-        // let req = new models.GetLiveCodeRequest();
-
-        // let reqParams = '{}';
-        // req.from_json_string(reqParams);
-
-
-        // return new Promise((resolve, reject) => {
-        //     client.GetLiveCode(req, function(errMsg, response) {
-
-        //         if (errMsg) {
-        //             reject(errMsg);
-        //             return;
-        //         }
-        //         resolve(response.to_json_string());
-        //     });
-        // });
-        return this.request('face-livegetfour', params, options);
+    // 增加人脸
+    CreateFace(data = {}, options = {}) {
+        return this.request({
+            Service: 'iai',
+            Action: 'CreateFace',
+            Version: 'v20180301',
+            data,
+            options,
+        });
     }
 
-    // 人脸核身-活体检测视频与用户照片的对比
-    faceLiveDetectFour(params, options) {
-        return this.request('face-livedetectfour', params, options);
+    // 删除人脸
+    DeleteFace(data = {}, options = {}) {
+        return this.request({
+            Service: 'iai',
+            Action: 'DeleteFace',
+            Version: 'v20180301',
+            data,
+            options,
+        });
     }
 
-    // 人脸核身-用户上传照片身份信息核验
-    faceIdCardCompare(params, options) {
-        return this.request('face-idcardcompare', params, options);
+    // 复制人员
+    CopyPerson(data = {}, options = {}) {
+        return this.request({
+            Service: 'iai',
+            Action: 'CopyPerson',
+            Version: 'v20180301',
+            data,
+            options,
+        });
     }
 
-    // OCR-身份证识别
-    ocrIdCard(params, options) {
-        return this.request('ocr-idcard', params, options);
+    // 人脸搜索
+    SearchFaces(data = {}, options = {}) {
+        return this.request({
+            Service: 'iai',
+            Action: 'SearchFaces',
+            Version: 'v20180301',
+            data,
+            options,
+        });
     }
 
-    // OCR-名片识别
-    ocrBizCard(params, options) {
-        return this.request('ocr-businesscard', params, options);
+    // 人脸验证
+    VerifyFace(data = {}, options = {}) {
+        return this.request({
+            Service: 'iai',
+            Action: 'VerifyFace',
+            Version: 'v20180301',
+            data,
+            options,
+        });
     }
 
-    // OCR-手写体识别
-    ocrHandWriting(params, options) {
-        return this.request('ocr-handwriting', params, options);
-    }
-
-    // OCR-营业执照识别
-    ocrBizLicense(params, options) {
-        return this.request('ocr-bizlicense', params, options);
-    }
-
-    // OCR-行驶证驾驶证
-    ocrDrivingLicence(params, options) {
-        return this.request('ocr-drivinglicence', params, options);
-    }
-
-    // OCR-车牌号识别
-    ocrPlate(params, options) {
-        return this.request('ocr-plate', params, options);
-    }
-
-    // OCR-通用印刷体识别
-    ocrGeneral(params, options) {
-        return this.request('ocr-general', params, options);
-    }
-
-    // OCR-银行卡识别
-    ocrBankCard(params, options) {
-        return this.request('ocr-bankcard', params, options);
+    // 人脸静态活体检测
+    DetectLiveFace(data = {}, options = {}) {
+        return this.request({
+            Service: 'iai',
+            Action: 'DetectLiveFace',
+            Version: 'v20180301',
+            data,
+            options,
+        });
     }
 
 }

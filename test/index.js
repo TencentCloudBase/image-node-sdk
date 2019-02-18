@@ -22,34 +22,14 @@ else {
     Name = config.Name;
 }
 
-describe('ai service', () => {
-    it('图片标签 - imgTagDetect', async () => {
-        let imageUrl = 'https://ask.qcloudimg.com/draft/1011618/hmx4gls586.jpg';
-        let imgClient1 = new ImageClient();
-        let result = await imgClient1
-            .setProtocol('http')
-            .imgTagDetect({
-                data: {
-                    url: imageUrl
-                }
-            });
-
-        let data = JSON.parse(result.body);
-        // console.log(data);
-        expect(data).toEqual({
-            'code': 0,
-            'message': 'success',
-            'tags': [{ 'tag_name': '盘子', 'tag_confidence': 45 }, { 'tag_name': '碗', 'tag_confidence': 23 }, { 'tag_name': '菜品', 'tag_confidence': 62 }]
-        });
-    }, 30000);
-
-    it.only('人脸融合 - faceFuse', async () => {
-        let imgClient1 = new ImageClient();
+describe('人脸融合', () => {
+    it('人脸融合 - faceFuse', async () => {
+        let imgClient = new ImageClient();
         let imgData = fs.readFileSync(path.join(__dirname, 'ponyma.jpg')).toString('base64');
 
-        // console.log(imgData);
-        let result = await imgClient1
-            .faceFuse({
+        let result = await imgClient
+            .init({
+                action: 'FaceFusion',
                 data: {
                     ProjectId: '100792',
                     ModelId: 'qc_100792_162409_1',
@@ -62,41 +42,475 @@ describe('ai service', () => {
         expect(data.Image).not.toBeNull();
         expect(data.RequestId).not.toBeNull();
     }, 20000);
+});
 
-    it('人脸核身·获取数字验证码 - faceLiveGetFour', async () => {
+describe('人脸核身', () => {
+    // it('实名核身鉴权', async () => {
+    //     let imgClient = new ImageClient();
+    //     let result = await imgClient
+    //         .init({
+    //             action: 'DetectAuth',
+    //             data: {
+    //                 RuleId: 1,
+    //                 IdCard,
+    //                 Name,
+    //                 ImageBase64: fs.readFileSync(path.join(__dirname, '../config/face.jpg')).toString('base64'),
+    //             }
+    //         });
+
+    //     let data = JSON.parse(result);
+    //     console.log(data);
+    // });
+
+    it('获取动作顺序', async () => {
         let imgClient = new ImageClient();
-
-        // console.log(imgData);
         let result = await imgClient
-            .faceLiveGetFour({
-                data: {}
+            .init({
+                action: 'GetActionSequence',
             });
 
-        console.log(result.body);
-        let data = JSON.parse(result.body);
-        expect(data.code).toEqual(0);
-        expect(data.data.validate_data).not.toBeNull();
-    }, 20000);
+        let data = JSON.parse(result);
+        // console.log(data);
+        expect(typeof data.ActionSequence).toBe('string');
+    });
 
-    it('人脸核身·活体人脸核身 - faceIdCardLiveDetectFour', async () => {
+    it('获取数字验证码', async () => {
         let imgClient = new ImageClient();
-
         let result = await imgClient
-            .faceIdCardLiveDetectFour({
-                headers: {
-                    'content-type': 'multipart/form-data'
-                },
-                formData: {
-                    idcard_number: IdCard,
-                    idcard_name: Name,
-                    video: fs.readFileSync(path.join(__dirname, '../config/faceIdCardLiveDetectFour.mp4')),
-                    validate_data: '1234'
+            .init({
+                action: 'GetLiveCode',
+            });
+
+        let data = JSON.parse(result);
+        expect(typeof data.LiveCode).toBe('string');
+        // console.log(data);
+    });
+
+    it('照片人脸核身', async () => {
+        let imgClient = new ImageClient();
+        let result = await imgClient
+            .init({
+                action: 'ImageRecognition',
+                data: {
+                    IdCard,
+                    Name,
+                    ImageBase64: fs.readFileSync(path.join(__dirname, '../config/face.jpg')).toString('base64'),
                 }
             });
 
-        let data = JSON.parse(result.body);
-        expect(data.data.live_status).toEqual(0);
-        expect(data.data.compare_status).toEqual(0);
-    }, 20000);
+        let data = JSON.parse(result);
+        // console.log(data);
+        expect(data.Sim > 80).toBeTruthy();
+    });
 
+    it('活体人脸对比', async () => {
+        let imgClient = new ImageClient();
+        let result = await imgClient
+            .init({
+                action: 'LivenessCompare',
+                data: {
+                    VideoBase64: fs.readFileSync(path.join(__dirname, '../config/faceIdCardLiveDetectFour.mp4')).toString('base64'),
+                    ImageBase64: fs.readFileSync(path.join(__dirname, '../config/face.jpg')).toString('base64'),
+                    LivenessType: 'LIP',
+                    ValidateData: '1234'
+                }
+            });
+
+        let data = JSON.parse(result);
+        // console.log(data);
+        expect(data.Sim > 80).toBeTruthy();
+    }, 200000);
+
+    it('活体人脸核身', async () => {
+        let imgClient = new ImageClient();
+        let result = await imgClient
+            .init({
+                action: 'LivenessRecognition',
+                data: {
+                    IdCard,
+                    Name,
+                    VideoBase64: fs.readFileSync(path.join(__dirname, '../config/faceIdCardLiveDetectFour.mp4')).toString('base64'),
+                    LivenessType: 'LIP',
+                    ValidateData: '1234'
+                }
+            });
+
+        let data = JSON.parse(result);
+        // console.log(data);
+        expect(data.Sim > 80).toBeTruthy();
+    }, 20000);
+});
+
+describe('人脸识别', () => {
+
+    it('人脸检测与分析', async () => {
+        let imgClient = new ImageClient();
+        let result = await imgClient
+            .init({
+                action: 'DetectFace',
+                data: {
+                    Image: fs.readFileSync(path.join(__dirname, '../config/face.jpg')).toString('base64'),
+                }
+            });
+
+        let data = JSON.parse(result);
+        // console.log(data);
+        expect(Array.isArray(data.FaceInfos)).toBeTruthy();
+    }, 5000);
+
+    it('五官识别', async () => {
+        let imgClient = new ImageClient();
+        let result = await imgClient
+            .init({
+                action: 'AnalyzeFace',
+                data: {
+                    Mode: 0,
+                    Image: fs.readFileSync(path.join(__dirname, '../config/face.jpg')).toString('base64'),
+                }
+            });
+
+        let data = JSON.parse(result);
+        // console.log(data);
+        expect(Array.isArray(data.FaceShapeSet)).toBeTruthy();
+    }, 5000);
+
+    it('人脸比对', async () => {
+        let imgClient = new ImageClient();
+        let result = await imgClient
+            .init({
+                action: 'CompareFace',
+                data: {
+                    ImageA: fs.readFileSync(path.join(__dirname, '../config/mengmeiqi-0001.jpeg')).toString('base64'),
+                    ImageB: fs.readFileSync(path.join(__dirname, '../config/mengmeiqi-0002.jpeg')).toString('base64'),
+                }
+            });
+
+        let data = JSON.parse(result);
+        expect(data.Score > 80).toBeTruthy();
+    }, 5000);
+
+    it('创建人员库', async () => {
+        try {
+            let imgClient = new ImageClient();
+            await imgClient
+                .init({
+                    action: 'CreateGroup',
+                    data: {
+                        GroupName: '孟美歧',
+                        GroupId: 'mengmeiqi-01',
+                        GroupExDescriptions: ['火箭少女', '宇宙少女']
+                    }
+                });
+        }
+        catch (e) {
+            expect(e.code).toBe('InvalidParameterValue.GroupIdAlreadyExist');
+        }
+    });
+
+    it('删除人员库', async () => {
+        try {
+            let imgClient = new ImageClient();
+            await imgClient
+                .init({
+                    action: 'DeleteGroup',
+                    data: {
+                        GroupId: 'mengmeiqi-02'
+                    }
+                });
+        }
+        catch (e) {
+            expect(e.code).toBe('InvalidParameterValue.GroupIdNotExist');
+        }
+    });
+
+    it('获取人员库列表', async () => {
+        let imgClient = new ImageClient();
+        let result = await imgClient
+            .init({
+                action: 'GetGroupList',
+                data: {
+                    Offset: 0,
+                    Limit: 10
+                }
+            });
+
+        let data = JSON.parse(result);
+        // console.log(data);
+        expect(data.GroupInfos).toEqual(
+            [
+                {
+                    GroupName: '孟美歧',
+                    GroupId: 'mengmeiqi-01',
+                    GroupExDescriptions: ['火箭少女', '宇宙少女'],
+                    Tag: null
+                }
+            ]
+        );
+        expect(data.GroupNum).toBe(1);
+    }, 5000);
+
+    it('修改人员库', async () => {
+        try {
+            let imgClient = new ImageClient();
+            await imgClient
+                .init({
+                    action: 'ModifyGroup',
+                    data: {
+                        GroupId: 'mengmeiqi-02'
+                    }
+                });
+        }
+        catch (e) {
+            expect(e.code).toBe('InvalidParameterValue.GroupIdNotExist');
+        }
+    }, 5000);
+
+    it('创建人员', async () => {
+        try {
+            let imgClient = new ImageClient();
+            await imgClient
+                .init({
+                    action: 'CreatePerson',
+                    data: {
+                        GroupId: 'mengmeiqi-01',
+                        PersonName: '孟美歧',
+                        PersonId: 'mengmeiqi-0001',
+                        Image: fs.readFileSync(path.join(__dirname, '../config/mengmeiqi-0001.jpeg')).toString('base64'),
+                    }
+                });
+        }
+        catch (e) {
+            expect(e.code).toBe('InvalidParameterValue.PersonIdAlreadyExist');
+        }
+    }, 5000);
+
+    it('删除人员', async () => {
+        try {
+            let imgClient = new ImageClient();
+            await imgClient
+                .init({
+                    action: 'DeletePerson',
+                    data: {
+                        PersonId: 'mengmeiqi-0002',
+                    }
+                });
+        }
+        catch (e) {
+            expect(e.code).toBe('InvalidParameterValue.PersonIdNotExist');
+        }
+    }, 5000);
+
+    it('人员库删除人员', async () => {
+        try {
+            let imgClient = new ImageClient();
+            await imgClient
+                .init({
+                    action: 'DeletePersonFromGroup',
+                    data: {
+                        GroupId: 'mengmeiqi-01',
+                        PersonId: 'mengmeiqi-0002',
+                    }
+                });
+        }
+        catch (e) {
+            expect(e.code).toBe('InvalidParameterValue.PersonIdNotExist');
+        }
+    }, 5000);
+
+    it('获取人员列表', async () => {
+        let imgClient = new ImageClient();
+        let result = await imgClient
+            .init({
+                action: 'GetPersonList',
+                data: {
+                    GroupId: 'mengmeiqi-01',
+                    Offset: 0,
+                    Limit: 10
+                }
+            });
+        
+        let data = JSON.parse(result);
+        // console.log(data);
+        expect(data.PersonNum).toBe(1);
+        expect(data.FaceNum).toBe(1);
+    }, 5000);
+
+    it('获取人员列表长度', async () => {
+        let imgClient = new ImageClient();
+        let result = await imgClient
+            .init({
+                action: 'GetPersonListNum',
+                data: {
+                    GroupId: 'mengmeiqi-01',
+                }
+            });
+        
+        let data = JSON.parse(result);
+        // console.log(data);
+        expect(data.PersonNum).toBe(1);
+        expect(data.FaceNum).toBe(1);
+    }, 5000);
+
+    it('获取人员基础信息', async () => {
+        let imgClient = new ImageClient();
+        let result = await imgClient
+            .init({
+                action: 'GetPersonBaseInfo',
+                data: {
+                    PersonId: 'mengmeiqi-0001',
+                }
+            });
+        
+        let data = JSON.parse(result);
+        // console.log(data);
+        expect(data.PersonName).toBe('孟美歧');
+        expect(data.Gender).toBe(0);
+    }, 5000);
+
+    it('获取人员归属信息', async () => {
+        let imgClient = new ImageClient();
+        let result = await imgClient
+            .init({
+                action: 'GetPersonGroupInfo',
+                data: {
+                    PersonId: 'mengmeiqi-0001',
+                    Offset: 0,
+                    Limit: 10
+                }
+            });
+        
+        let data = JSON.parse(result);
+        // console.log(data);
+        expect(data.PersonGroupInfos).toEqual([
+            { GroupId: 'mengmeiqi-01', PersonExDescriptions: [] }
+        ]);
+    }, 5000);
+
+    it('修改人员基础信息', async () => {
+        try {
+            let imgClient = new ImageClient();
+            await imgClient
+                .init({
+                    action: 'ModifyPersonBaseInfo',
+                    data: {
+                        PersonId: 'mengmeiqi-0002',
+                        PersonName: 'hahaha'
+                    }
+                });
+        }
+        catch (e) {
+            expect(e.code).toBe('InvalidParameterValue.PersonIdNotExist');
+        }
+    }, 5000);
+
+    it('修改人员描述信息', async () => {
+        try {
+            let imgClient = new ImageClient();
+            await imgClient
+                .init({
+                    action: 'ModifyPersonGroupInfo',
+                    data: {
+                        GroupId: 'mengmeiqi-01',
+                        PersonId: 'mengmeiqi-0002',
+                        PersonExDescriptionInfos: [{
+                            PersonExDescriptionIndex: 0,
+                            PersonExDescription: 'haha'
+                        }]
+                    }
+                });
+        }
+        catch (e) {
+            expect(e.code).toBe('InvalidParameterValue.PersonIdNotExist');
+        }
+    }, 5000);
+
+    it('增加人脸', async () => {
+        let imgClient = new ImageClient();
+        let result = await imgClient
+            .init({
+                action: 'CreateFace',
+                data: {
+                    PersonId: 'mengmeiqi-0001',
+                    Images: [
+                        fs.readFileSync(path.join(__dirname, '../config/mengmeiqi-0002.jpeg')).toString('base64'),
+                        fs.readFileSync(path.join(__dirname, '../config/mengmeiqi-0003.jpeg')).toString('base64')
+                    ],
+                }
+            });
+        
+        let data = JSON.parse(result);
+        // console.log(data);
+        expect(data.SucFaceNum).toEqual(2);
+    }, 5000);
+
+    it('删除人脸', async () => {
+        let imgClient = new ImageClient();
+        let result = await imgClient
+            .init({
+                action: 'DeleteFace',
+                data: {
+                    PersonId: 'mengmeiqi-0001',
+                    FaceIds: ['2984444426221357938', '2984447426221357949']
+                }
+            });
+
+        let data = JSON.parse(result);
+        expect(data.SucDeletedNum).toEqual(0);
+    }, 5000);
+
+    it('复制人员', async () => {
+        try {
+            let imgClient = new ImageClient();
+            await imgClient.init({
+                action: 'CopyPerson',
+                data: {
+                    PersonId: 'mengmeiqi-0001',
+                    GroupIds: ['mengmeiqi-02']
+                }
+            });
+        }
+        catch (e) {
+            expect(e.code).toBe('InvalidParameterValue.GroupIdNotExist');
+        }
+    }, 5000);
+
+    it('人脸搜索', async () => {
+        let imgClient = new ImageClient();
+        let result = await imgClient.init({
+            action: 'SearchFaces',
+            data: {
+                GroupIds: ['mengmeiqi-01'],
+                Image: fs.readFileSync(path.join(__dirname, '../config/mengmeiqi-0004.jpg')).toString('base64'),
+            }
+        });
+        let data = JSON.parse(result);
+        expect(data.Results[0].Candidates.length > 0).toBeTruthy();
+    }, 5000);
+
+    it('人脸验证', async () => {
+        let imgClient = new ImageClient();
+        let result = await imgClient.init({
+            action: 'VerifyFace',
+            data: {
+                PersonId: 'mengmeiqi-0001',
+                Image: fs.readFileSync(path.join(__dirname, '../config/mengmeiqi-0004.jpg')).toString('base64'),
+            }
+        });
+        let data = JSON.parse(result);
+        // console.log(data);
+        expect(data.Score > 80).toBeTruthy();
+    }, 5000);
+
+    it('人脸静态活体检测', async () => {
+        let imgClient = new ImageClient();
+        let result = await imgClient.init({
+            action: 'DetectLiveFace',
+            data: {
+                Image: fs.readFileSync(path.join(__dirname, '../config/face.jpg')).toString('base64'),
+            }
+        });
+        let data = JSON.parse(result);
+        // console.log(data);
+        expect(data.Score > 80).toBeTruthy();
+    }, 5000);
 });

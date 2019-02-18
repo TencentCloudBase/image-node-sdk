@@ -26,7 +26,7 @@ process.env.SECRETKEY
 
 ## 使用
 
-以 OCR-身份证识别 为例，一般支持外链 url 或者本地读取图片文件，两种方式。
+以 创建人员 为例，一般支持外链 url 或者本地读取图片文件，两种方式。
 
 * 外链 url
 
@@ -39,11 +39,15 @@ let AppId = ''; // 腾讯云 AppId
 let SecretId = ''; // 腾讯云 SecretId
 let SecretKey = ''; // 腾讯云 SecretKey
 
-let idCardImageUrl = 'http://images.cnitblog.com/blog/454646/201306/07090518-029ff26fac014d72a7786937e8319c78.jpg';
+let Url = 'https://www.google.com.hk/url?sa=i&source=images&cd=&cad=rja&uact=8&ved=2ahUKEwjX9Pv-s8XgAhWZKqYKHY2WCOcQjRx6BAgBEAU&url=https%3A%2F%2Fkuaibao.qq.com%2Fs%2F20180506A0GUC600%3Frefer%3Dspider&psig=AOvVaw1hxiMNF_ZVQZvkVu11xNNf&ust=1550580081217063';
 let imgClient = new ImageClient({ AppId, SecretId, SecretKey });
-imgClient.ocrIdCard({
+imgClient.init({
+    action: 'CreatePerson',
     data: {
-        url_list: [idCardImageUrl]
+        GroupId: 'mengmeiqi-01',
+        PersonName: '孟美歧',
+        PersonId: 'mengmeiqi-0001',
+        Url,
     }
 }).then((result) => {
     console.log(result.body)
@@ -65,13 +69,13 @@ let SecretId = ''; // 腾讯云 SecretId
 let SecretKey = ''; // 腾讯云 SecretKey
 
 let imgClient = new ImageClient({ AppId, SecretId, SecretKey });
-imgClient.ocrIdCard({
-    formData: {
-        card_type: 0,
-        image: fs.createReadStream(path.join(__dirname, './idcard.jpg'))
-    },
-    headers: {
-        'content-type': 'multipart/form-data'
+imgClient.init({
+    action: 'CreatePerson',
+    data: {
+        GroupId: 'mengmeiqi-01',
+        PersonName: '孟美歧',
+        PersonId: 'mengmeiqi-0001',
+        Image: fs.readFileSync(path.join(__dirname, '../config/mengmeiqi-0001.jpeg')).toString('base64'),
     }
 }).then((result) => {
     console.log(result.body)
@@ -90,6 +94,14 @@ const SecretKey = ''; // 腾讯云 SecretKey
 const IdCard = ''; // 身份证号码，用于人脸核身
 const Name = ''; // 身份证姓名，用于人脸核身
 
+
+const ProxyUrl = ''; // 可填公司代理
+const AppId = ''; // 腾讯云 AppId
+const SecretId = ''; // 腾讯云  SecretId
+const SecretKey = ''; // 腾讯云 SecretKey
+const IdCard = ''; // 身份证号码，用于人脸核身
+const Name = ''; // 身份证姓名，用于人脸核身
+
 exports.ProxyUrl = ProxyUrl;
 exports.AppId = AppId;
 exports.SecretId = SecretId;
@@ -98,63 +110,44 @@ exports.IdCard = IdCard;
 exports.Name = Name;
 ```
 
-然后运行
-
-```javascript
-npm run example
-```
-
-
 ## 支持功能
-* 信息认证
-    - [x] [身份证信息认证](https://cloud.tencent.com/document/product/641/13391) - authIdCard
-
 * 人脸识别
-    - [x] [多脸检索](https://cloud.tencent.com/document/product/641/14349) - faceMultiple
-    - [x] [人脸检测与分析](https://cloud.tencent.com/document/product/641/12415) - faceDetect
-    - [x] [五官定位](https://cloud.tencent.com/document/product/641/12416) - faceShape
-    - [x] [个体信息管理-个体创建](https://cloud.tencent.com/document/product/641/12417#.E4.B8.AA.E4.BD.93.E5.88.9B.E5.BB.BA) - faceNewPerson
-    - [x] [个体信息管理-删除个体](https://cloud.tencent.com/document/product/641/12417#.E5.88.A0.E9.99.A4.E4.B8.AA.E4.BD.93) - faceDelPerson
-    - [x] [个体信息管理-增加人脸](https://cloud.tencent.com/document/product/641/12417#.E5.A2.9E.E5.8A.A0.E4.BA.BA.E8.84.B8) - faceAddFace
-    - [x] [个体信息管理-删除人脸](https://cloud.tencent.com/document/product/641/12417#.E5.88.A0.E9.99.A4.E4.BA.BA.E8.84.B8) - faceDelFace
-    - [x] [个体信息管理-设置信息](https://cloud.tencent.com/document/product/641/12417#.E8.AE.BE.E7.BD.AE.E4.BF.A1.E6.81.AF) - faceSetInfo
-    - [x] [个体信息管理-获取信息](https://cloud.tencent.com/document/product/641/12417#.E8.8E.B7.E5.8F.96.E4.BF.A1.E6.81.AF) - faceGetInfo
-    - [x] [个体信息管理-获取组列表](https://cloud.tencent.com/document/product/641/12417#.E8.8E.B7.E5.8F.96.E7.BB.84.E5.88.97.E8.A1.A8) - faceGetGpIds
-    - [x] [个体信息管理-获取人列表](https://cloud.tencent.com/document/product/641/12417#.E8.8E.B7.E5.8F.96.E4.BA.BA.E5.88.97.E8.A1.A8) - faceGetPersonIds
-    - [x] [个体信息管理-获取人脸列表](https://cloud.tencent.com/document/product/641/12417#.E8.8E.B7.E5.8F.96.E4.BA.BA.E8.84.B8.E5.88.97.E8.A1.A8) - faceGetFaceIds
-    - [x] [个体信息管理-获取人脸信息](https://cloud.tencent.com/document/product/641/12417#.E8.8E.B7.E5.8F.96.E4.BA.BA.E8.84.B8.E4.BF.A1.E6.81.AF) - faceGetFaceInfo
-    - [x] [个体信息管理-新增组信息](https://cloud.tencent.com/document/product/641/12417#person.E6.96.B0.E5.A2.9E.E7.BB.84.E4.BF.A1.E6.81.AF) - faceAddGPIds
-    - [x] [个体信息管理-删除组信息](https://cloud.tencent.com/document/product/641/12417#person.E5.88.A0.E9.99.A4.E7.BB.84.E4.BF.A1.E6.81.AF) - faceDelGPIds
-    - [x] [人脸验证](https://cloud.tencent.com/document/product/641/12418) - faceVerify
-    - [x] [人脸检索](https://cloud.tencent.com/document/product/641/12419) - faceIdentify
-    - [x] [人脸对比](https://cloud.tencent.com/document/product/641/12420) - faceCompare
+    - [x] [人脸检测与分析](https://cloud.tencent.com/document/api/867/32800) - DetectFace
+    - [x] [五官定位](https://cloud.tencent.com/document/api/867/32779) - AnalyzeFace
+    - [x] [人脸比对](https://cloud.tencent.com/document/api/867/32802) - CompareFace
 
-* 文字识别OCR
-    - [x] [手写体识别](https://cloud.tencent.com/document/product/641/12838) - ocrHandWriting
-    - [x] [身份证识别](https://cloud.tencent.com/document/product/641/12424) - ocrIdCard
-    - [x] [营业执照识别](https://cloud.tencent.com/document/product/641/12425) - ocrBizLicense
-    - [x] [行驶证驾驶证识别](https://cloud.tencent.com/document/product/641/12426) - ocrDrivingLicence
-    - [x] [车牌号识别](https://cloud.tencent.com/document/product/641/12427) - ocrPlate
-    - [x] [通用印刷体识别](https://cloud.tencent.com/document/product/641/12428) - ocrGeneral
-    - [x] [银行卡识别](https://cloud.tencent.com/document/product/641/12429) - ocrBankCard
-    - [x] [名片识别（V2)](https://cloud.tencent.com/document/product/641/13209) - ocrBizCard
+    - [x] [人员库管理-创建人员库](https://cloud.tencent.com/document/api/867/32794) - CreateGroup
+    - [x] [人员库管理-删除人员库](https://cloud.tencent.com/document/api/867/32791) - DeleteGroup
+    - [x] [人员库管理-获取人员库列表](https://cloud.tencent.com/document/api/867/32788) - GetGroupList
+    - [x] [人员库管理-修改人员库](https://cloud.tencent.com/document/api/867/32783) - ModifyGroup
+    - [x] [人员库管理-创建人员](https://cloud.tencent.com/document/api/867/32793) - CreatePerson
+    - [x] [人员库管理-删除人员](https://cloud.tencent.com/document/api/867/32790) - DeletePerson
+    - [x] [人员库管理-人员库删除人员](https://cloud.tencent.com/document/api/867/32789) - DeletePersonFromGroup
+    - [x] [人员库管理-获取人员列表长度](https://cloud.tencent.com/document/api/867/32784) - GetPersonListNum
+    - [x] [人员库管理-获取人员基础信息](https://cloud.tencent.com/document/api/867/32787) - GetPersonBaseInfo
+    - [x] [人员库管理-获取人员归属信息](https://cloud.tencent.com/document/api/867/32786) - GetPersonGroupInfo
+    - [x] [人员库管理-修改人员基础信息](https://cloud.tencent.com/document/api/867/32782) - ModifyPersonBaseInfo
+    - [x] [人员库管理-修改人员描述信息](https://cloud.tencent.com/document/api/867/32781) - ModifyPersonGroupInfo
+    - [x] [人员库管理-获取人员库列表](https://cloud.tencent.com/document/api/867/32788) - GetGroupList
+    - [x] [人员库管理-增加人脸](https://cloud.tencent.com/document/api/867/32795) - CreateFace
+    - [x] [人员库管理-删除人脸](https://cloud.tencent.com/document/api/867/32792) - DeleteFace
+    - [x] [人员库管理-复制人员](https://cloud.tencent.com/document/api/867/32796) - CopyPerson
 
-* 图片识别
-    - [x] [图片标签](https://cloud.tencent.com/document/product/641/12421) - imgTagDetect
-    - [x] [图片鉴黄](https://cloud.tencent.com/document/product/641/12422) - imgPornDetect
+    - [x] [人脸搜索](https://cloud.tencent.com/document/api/867/32798) - SearchFaces
+    - [x] [人脸验证](https://cloud.tencent.com/document/api/867/32806) - VerifyFace
+    - [x] [人脸静态活体检测](https://cloud.tencent.com/document/api/867/32804) - DetectLiveFace
 
 * 人脸核身
-    - [x] [人脸静态活体检测](https://cloud.tencent.com/document/product/641/12558) - faceLiveDetectPic
-    - [x] [唇语活体检测视频身份信息核验](https://cloud.tencent.com/document/product/641/12430) - faceIdCardLiveDetectFour
-    - [x] [活体检测—获取唇语验证码](https://cloud.tencent.com/document/product/641/12431) - faceLiveGetFour
-    - [x] [活体检测视频与用户照片的对比](https://cloud.tencent.com/document/product/641/12432) - faceLiveDetectFour
-    - [x] [用户上传照片身份信息核验](https://cloud.tencent.com/document/product/641/12433) - faceIdCardCompare
+    - [x] [实名核身鉴权](https://cloud.tencent.com/document/product/1007/31816) - DetectAuth
+    - [x] [获取动作顺序](https://cloud.tencent.com/document/product/1007/31822) - GetActionSequence
+    - [x] [获取数字验证码](https://cloud.tencent.com/document/product/1007/31821) - GetLiveCode
+    - [x] [照片人脸核身](https://cloud.tencent.com/document/product/1007/31820) - ImageRecognition
+    - [x] [活体人脸比对](https://cloud.tencent.com/document/product/1007/31819) - LivenessCompare
+    - [x] [活体人脸核身](https://cloud.tencent.com/document/product/1007/31818) - LivenessRecognition
+    - [x] [获取实名核身结果信息](https://cloud.tencent.com/document/product/1007/31331) - GetDetectInfo
 
 * 人脸融合
-    - [x] [人脸融合](https://cloud.tencent.com/document/api/670/31061) - faceFuse
-
-* 注意事项
-人脸核身的相关接口，于2019年起全部需要申请新的[人脸核身-云智慧眼](https://console.cloud.tencent.com/ai/facein/cloud-godident-logic)，这样旧版接口也会同时开通。目前本 `SDK` 依旧是使用旧版的接口，新版接口有待后续更新。
+    - [x] [人脸融合](https://cloud.tencent.com/document/product/670/31061) - FaceFusion
 
 ## 更新日志
 [日志](./CHANGELOG.md)
