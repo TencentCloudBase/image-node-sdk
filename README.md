@@ -84,33 +84,8 @@ imgClient.init({
 });
 ```
 
-如果想运行，[example/index.js](./example/index.js) 下面的例子，请先在项目根目录新建 config/index.js 文件，并按以下格式写下配置
+## 支持功能及相关 API 文档
 
-```javascript
-const ProxyUrl = ''; // 可填公司代理
-const AppId = ''; // 腾讯云 AppId
-const SecretId = ''; // 腾讯云  SecretId
-const SecretKey = ''; // 腾讯云 SecretKey
-const IdCard = ''; // 身份证号码，用于人脸核身
-const Name = ''; // 身份证姓名，用于人脸核身
-
-
-const ProxyUrl = ''; // 可填公司代理
-const AppId = ''; // 腾讯云 AppId
-const SecretId = ''; // 腾讯云  SecretId
-const SecretKey = ''; // 腾讯云 SecretKey
-const IdCard = ''; // 身份证号码，用于人脸核身
-const Name = ''; // 身份证姓名，用于人脸核身
-
-exports.ProxyUrl = ProxyUrl;
-exports.AppId = AppId;
-exports.SecretId = SecretId;
-exports.SecretKey = SecretKey;
-exports.IdCard = IdCard;
-exports.Name = Name;
-```
-
-## 支持功能
 * 人脸识别
     - [x] [人脸检测与分析](https://cloud.tencent.com/document/api/867/32800) - DetectFace
     - [x] [五官定位](https://cloud.tencent.com/document/api/867/32779) - AnalyzeFace
