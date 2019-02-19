@@ -460,7 +460,7 @@ describe('人脸识别', () => {
 
         let data = JSON.parse(result);
         expect(data.SucDeletedNum).toEqual(0);
-    }, 5000);
+    }, 20000);
 
     it('复制人员', async () => {
         try {
@@ -476,7 +476,7 @@ describe('人脸识别', () => {
         catch (e) {
             expect(e.code).toBe('InvalidParameterValue.GroupIdNotExist');
         }
-    }, 5000);
+    }, 20000);
 
     it('人脸搜索', async () => {
         let imgClient = new ImageClient();
@@ -489,7 +489,7 @@ describe('人脸识别', () => {
         });
         let data = JSON.parse(result);
         expect(data.Results[0].Candidates.length > 0).toBeTruthy();
-    }, 5000);
+    }, 20000);
 
     it('人脸验证', async () => {
         let imgClient = new ImageClient();
@@ -503,7 +503,7 @@ describe('人脸识别', () => {
         let data = JSON.parse(result);
         // console.log(data);
         expect(data.Score > 80).toBeTruthy();
-    }, 5000);
+    }, 20000);
 
     it.skip('人脸静态活体检测', async () => {
         let imgClient = new ImageClient();
@@ -516,5 +516,5 @@ describe('人脸识别', () => {
         let data = JSON.parse(result);
         // console.log(data);
         expect(data.Score > 80).toBeTruthy();
-    }, 5000);
+    }, 20000);
 });
