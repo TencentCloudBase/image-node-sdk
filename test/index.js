@@ -15,8 +15,7 @@ if (process.env.TRAVIS) {
 else {
     let config = require('../config');
     ProxyUrl = config.ProxyUrl;
-    process.env.TENCENTCLOUD_APPID = config.AppId;
-    process.env.TENCENTCLOUD_SECRETID = config.SecretId;
+    process.env.TENCENTCLOUD_SECRETID = config.SecretID;
     process.env.TENCENTCLOUD_SECRETKEY = config.SecretKey;
     IdCard = config.IdCard;
     Name = config.Name;

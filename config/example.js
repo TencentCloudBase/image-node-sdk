@@ -1,14 +1,12 @@
 
 const ProxyUrl = '';
-const AppId = '';
-const SecretId = '';
+const SecretID = '';
 const SecretKey = '';
 const IdCard = '';
 const Name = '';
 
 exports.ProxyUrl = ProxyUrl;
-exports.AppId = AppId;
-exports.SecretId = SecretId;
+exports.SecretID = SecretID;
 exports.SecretKey = SecretKey;
 exports.IdCard = IdCard;
 exports.Name = Name;

@@ -7,18 +7,15 @@ const HttpProfile = tencentcloud.common.HttpProfile;
 
 class BaseService {
 
-    constructor({ AppId, SecretId, SecretKey } = {}) {
+    constructor({ SecretID, SecretKey } = {}) {
         let {
-            APPID,
             SECRETID,
             SECRETKEY,
-            TENCENTCLOUD_APPID,
             TENCENTCLOUD_SECRETID,
             TENCENTCLOUD_SECRETKEY
         } = process.env;
 
-        this.AppId = AppId || TENCENTCLOUD_APPID || APPID;
-        this.SecretId = SecretId || TENCENTCLOUD_SECRETID || SECRETID;
+        this.SecretID = SecretID || TENCENTCLOUD_SECRETID || SECRETID;
         this.SecretKey = SecretKey || TENCENTCLOUD_SECRETKEY || SECRETKEY;
     }
 
@@ -45,7 +42,7 @@ class BaseService {
     request({ Service, Action, Version, data, options }) {
         const Client = tencentcloud[Service][Version].Client;
         const Models = tencentcloud[Service][Version].Models;
-        let cred = new Credential(this.SecretId, this.SecretKey);
+        let cred = new Credential(this.SecretID, this.SecretKey);
         let httpProfile = new HttpProfile();
         httpProfile.endpoint = config.Services[Action].url;
         let clientProfile = new ClientProfile();

@@ -12,14 +12,12 @@ npm i --save image-node-sdk
 
 ## 配置
 
-可以设置以下环境变量，这样就不需要传入 `AppId`, `SecretID` 和 `SecretKey` 了。
+可以设置以下环境变量，这样就不需要传入 `SecretID` 和 `SecretKey` 了。
 ```javascript
-process.env.TENCENTCLOUD_APPID
 process.env.TENCENTCLOUD_SECRETID
 process.env.TENCENTCLOUD_SECRETKEY
 
 // 或
-process.env.APPID
 process.env.SECRETID
 process.env.SECRETKEY
 ```
@@ -35,12 +33,11 @@ const {
     ImageClient
 } = require('image-node-sdk');
 
-let AppId = ''; // 腾讯云 AppId
-let SecretId = ''; // 腾讯云 SecretId
+let SecretID = ''; // 腾讯云 SecretID
 let SecretKey = ''; // 腾讯云 SecretKey
 
 let Url = 'https://www.google.com.hk/url?sa=i&source=images&cd=&cad=rja&uact=8&ved=2ahUKEwjX9Pv-s8XgAhWZKqYKHY2WCOcQjRx6BAgBEAU&url=https%3A%2F%2Fkuaibao.qq.com%2Fs%2F20180506A0GUC600%3Frefer%3Dspider&psig=AOvVaw1hxiMNF_ZVQZvkVu11xNNf&ust=1550580081217063';
-let imgClient = new ImageClient({ AppId, SecretId, SecretKey });
+let imgClient = new ImageClient({ SecretID, SecretKey });
 imgClient.init({
     action: 'CreatePerson',
     data: {
@@ -64,11 +61,10 @@ const {
     ImageClient
 } = require('image-node-sdk');
 
-let AppId = ''; // 腾讯云 AppId
-let SecretId = ''; // 腾讯云 SecretId
+let SecretID = ''; // 腾讯云 SecretID
 let SecretKey = ''; // 腾讯云 SecretKey
 
-let imgClient = new ImageClient({ AppId, SecretId, SecretKey });
+let imgClient = new ImageClient({ SecretID, SecretKey });
 imgClient.init({
     action: 'CreatePerson',
     data: {
